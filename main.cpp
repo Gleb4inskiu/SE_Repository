@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cctype>
 using namespace std;
 
 bool isNumeric(const std::string& str) {
@@ -24,6 +25,10 @@ bool isNumeric(const std::string& str) {
 			return false;
 		}
 	}
+	if (str == "." || str == "-.") {
+		return false;
+	}
+
 	return true;
 }
 
@@ -77,11 +82,20 @@ int main()
 		{
 			std::cout << "You chose to load data from file." << std::endl;
 			std::cout << "Important! To enter floating point data, use '.'" << std::endl;
-			ifstream inputFile("input.txt");
-			if (!inputFile.is_open())
-			{
-				std::cout << "Create input.txt, in directory with this code-file, and add 4 separated numbers in txt. The numbers order: a, b, step, n." << endl;
-				return 1;
+			ifstream inputFile;
+			string filename;
+			bool fileOpened = false;
+
+			while (!fileOpened) {
+				std::cout << "Enter the file name (e.g., 'input.txt'): ";
+				getline(cin, filename);
+				inputFile.open(filename);
+				if (!inputFile.is_open()) {
+					std::cout << "Error: Could not open file '" << filename << "'. Please try again." << std::endl;
+				}
+				else {
+					fileOpened = true;
+				}
 			}
 			if (!(inputFile >> a >> b >> step >> n))
 			{
@@ -104,7 +118,7 @@ int main()
 			else
 			{
 				inputFile.close();
-				std::cout << "Data from file are loaded" << endl;
+				std::cout << "Data from file are loaded:" << endl;
 				std::cout << "a = " << a << ", b = " << b << ", step = " << step << ", n = " << n << endl;
 				while (!validInput_2) {
 					std::cout << "Is your data correct? Type y - if yes, n - if no: ";
@@ -125,12 +139,15 @@ int main()
 		}
 		else if (input == "k")
 		{
+			std::cout << "-------------------------------------------------------------------------------------" << std::endl;
 			std::cout << "You chose to input data from keyboard." << std::endl;
-			std::cout << "Important! To enter floating point data, use '.'" << std::endl; 
+			std::cout << "!Important! To enter floating point data, use '.'!" << std::endl; 
+			std::cout << "Also check that the number is not written with a 'spacebar', as this is incorrect!" << std::endl;
+			std::cout << "-------------------------------------------------------------------------------------" << std::endl;
 			do {
 				do {
 					std::cout << "Input a (start of the range): ";
-					cin >> input;
+					getline(cin, input);
 					if (!isNumeric(input)) {
 						std::cout << "Invalid input. Please enter a numeric value." << std::endl;
 					}
@@ -139,9 +156,10 @@ int main()
 						break;
 					}
 				} while (true);
+
 				do {
 					std::cout << "Input b (end of the range): ";
-					cin >> input;
+					getline(cin, input);
 					if (!isNumeric(input) || stod(input) <= a) {
 						std::cout << "Invalid input. Please enter a numeric value and b must be greater than a." << std::endl;
 					}
@@ -149,10 +167,11 @@ int main()
 						b = stod(input);
 						break;
 					}
-				} while (!isNumeric(input) || b < a);
+				} while (true);
+
 				do {
 					std::cout << "Input step: ";
-					cin >> input;
+					getline(cin, input);
 					if (!isNumeric(input) || stod(input) <= 0) {
 						std::cout << "Invalid input. Please enter a numeric value greater than 0." << std::endl;
 					}
@@ -162,10 +181,9 @@ int main()
 					}
 				} while (true);
 
-				do
-				{
+				do {
 					std::cout << "Input n (n > 1): ";
-					cin >> input;
+					getline(cin, input);
 					if (!isInteger(input) || stoi(input) <= 1) {
 						std::cout << "Invalid input. Please enter an INTEGER value greater than 1." << std::endl;
 					}
@@ -175,23 +193,26 @@ int main()
 					}
 				} while (true);
 
+				std::cout << "-------------------------------------------------------------------------------------" << std::endl;
 				std::cout << "a = " << a << ", b = " << b << ", step = " << step << ", n = " << n << endl;
-				cin.clear();
-				cin.ignore(numeric_limits<std::streamsize>::max(), '\n');
 				while (!validInput_2)
 				{
 					std::cout << "Is your data correct? Type y - if yes, n - if no: ";
 					getline(cin, input);
 					if (isValidChoice(input)) {
-						validInput_2 = true;
+						if (input == "n") {
+							std::cout << "You choose to input your data again." << std::endl;
+							std::cout << "-------------------------------------------------------------------------------------" << std::endl;
+							validInput_2 = false;
+							break; 
+						}
+						else {
+							validInput_2 = true; 
+						}
 					}
 					else {
 						std::cout << "You need to enter only one character ('y' or 'n'). Try again." << std::endl;
 					}
-				}
-				if (input == "n")
-				{
-					std::cout << "You choose input your data again." << endl;
 				}
 			} while (input == "n");
 		}
