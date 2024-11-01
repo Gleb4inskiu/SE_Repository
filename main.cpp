@@ -5,6 +5,9 @@
 using namespace std;
 
 bool isNumeric(const std::string& str) {
+	if (str.empty()) { 
+		return false;
+	}
 	bool hasDecimalPoint = false;
 	int start = 0;
 
@@ -33,6 +36,9 @@ bool isNumeric(const std::string& str) {
 }
 
 bool isInteger(const std::string& str) {
+	if (str.empty()) { 
+		return false;
+	}
 	int start = 0;
 
 	if (str[0] == '-') {
