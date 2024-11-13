@@ -3,7 +3,7 @@
 #include <string>
 #include <cctype>
 using namespace std;
-// error!!!
+
 bool isNumeric(const std::string& str) {
 	if (str.empty()) { 
 		return false;
